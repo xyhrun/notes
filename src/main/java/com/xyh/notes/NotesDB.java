@@ -15,8 +15,10 @@ public class NotesDB extends SQLiteOpenHelper {
     public static final String PATH= "path";
     public static final String VIDEO= "video";
     public static final String TIME = "time";
+    public static final String TXT_COLOR = "txt_color";
+    public static final String TXT_FONT = "txt_font";
 
-
+    //修改数据库表的字段信息,要控制好版本信息,或者直接卸载软件重新安装.否则插入信息不匹配,导致插入失败
     public NotesDB(Context context) {
         super(context, TABLE_NAME, null, 1);
     }
@@ -29,6 +31,8 @@ public class NotesDB extends SQLiteOpenHelper {
                              +" content text,"
                              +" path text,"
                              +" video text,"
+                             +" txt_color integer,"
+                             +" txt_font integer,"
                              +" time text)";
         db.execSQL(create_table);
     }

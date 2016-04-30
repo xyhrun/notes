@@ -6,16 +6,20 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.MediaController;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -38,6 +42,8 @@ public class EditContent extends Activity implements View.OnClickListener {
     private Button save_btn, cancle_btn;
     private EditText edit_et;
     private MediaController mController;
+    private Integer txt_color = 0;
+    private Integer txt_font = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +60,50 @@ public class EditContent extends Activity implements View.OnClickListener {
         save_btn.setOnClickListener(this);
         cancle_btn.setOnClickListener(this);
         initView();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //设置字体颜色
+            case R.id.txt_red:
+                txt_color = Color.RED;
+                edit_et.setTextColor(txt_color);
+                break;
+            case R.id.txt_green:
+                txt_color = Color.GREEN;
+                edit_et.setTextColor(txt_color);
+                break;
+            case R.id.txt_blue:
+                txt_color = Color.BLUE;
+                edit_et.setTextColor(txt_color);
+                break;
+            case R.id.txt_yellow:
+                txt_color = Color.YELLOW;
+                edit_et.setTextColor(txt_color);
+                break;
+            //设置字体的大小
+            case R.id.font_15:
+                txt_font = 15;
+                edit_et.setTextSize(txt_font);
+                break;
+            case R.id.font_25:
+                txt_font = 25;
+                edit_et.setTextSize(txt_font);
+                break;
+            case R.id.font_35:
+                txt_font = 35;
+                edit_et.setTextSize(txt_font);
+                break;
+        }
+        return true;
     }
 
     private void initView() {
@@ -108,6 +158,21 @@ public class EditContent extends Activity implements View.OnClickListener {
         String mTime = getTime();
         Log.d(TAG, "----addData: edit_et"+edit_et.getText().toString());
         values.put(NotesDB.CONTENT, edit_et.getText().toString());
+        if (txt_color == 0) {
+            txt_color = Color.BLACK;
+            values.put(NotesDB.TXT_COLOR, txt_color);
+        } else {
+            values.put(NotesDB.TXT_COLOR, txt_color);
+        }
+
+        if (txt_font == 0) {
+            txt_font = 20;
+            values.put(NotesDB.TXT_FONT, txt_font);
+        } else {
+            values.put(NotesDB.TXT_FONT, txt_font);
+        }
+//        values.put(NotesDB.TXT_COLOR,txt_color);
+//        values.put(NotesDB.TXT_FONT,txt_font);
         Log.d(TAG, "----addData: content values = "+values);
         values.put(NotesDB.TIME, mTime);
         Log.d(TAG, "----addData: content time values = "+values);
@@ -133,6 +198,10 @@ public class EditContent extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.edit_save_id:
                 Log.d(TAG, "------onClick: 点击保存了"+R.id.edit_save_id);
+                if (edit_et.getText().toString().equals("") && (mFile+"").equals("null") && (vFile+"").equals("null")) {
+                    Toast.makeText(EditContent.this, "笔记不能为空!", Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 addData();
                 finish();
                 break;

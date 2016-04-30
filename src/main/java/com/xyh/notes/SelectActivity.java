@@ -7,8 +7,11 @@ import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -35,6 +38,8 @@ public class SelectActivity extends Activity {
     private static final String TAG = "SelectActivity";
     private String imgPath, videoPath, content, time;
     private int id;
+    private int txt_color;
+    private int txt_font;
     private MediaController mController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +53,14 @@ public class SelectActivity extends Activity {
         imgPath = getIntent().getStringExtra(NotesDB.PATH);
         videoPath = getIntent().getStringExtra(NotesDB.VIDEO);
         id = getIntent().getIntExtra(NotesDB.ID, -1);
+        txt_color = getIntent().getIntExtra(NotesDB.TXT_COLOR, 0);
+        txt_font = getIntent().getIntExtra(NotesDB.TXT_FONT, 0);
         content = getIntent().getStringExtra(NotesDB.CONTENT);
         time = getIntent().getStringExtra(NotesDB.TIME);
 //        Log.d(TAG, "------onCreate: id = "+getIntent().getIntExtra(NotesDB.ID,-1));
         select_content.setText(content);
+        select_content.setTextColor(txt_color);
+        select_content.setTextSize(txt_font);
         select_time.setText(time);
         Log.d(TAG, "-----onCreate: imgPath = "+imgPath);
         if (!imgPath.equals("null")) {
@@ -112,12 +121,56 @@ public class SelectActivity extends Activity {
                 ContentValues values = new ContentValues();
                 values.put(NotesDB.CONTENT, content);
                 values.put(NotesDB.TIME, time);
+                values.put(NotesDB.TXT_COLOR,txt_color);
+                values.put(NotesDB.TXT_FONT,txt_font);
                 dbWriter.update(NotesDB.TABLE_NAME, values, NotesDB.ID + "=" + id, null);
                 finish();
             }
         });
     }
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            //设置字体颜色
+            case R.id.txt_red:
+                txt_color = Color.RED;
+                select_content.setTextColor(txt_color);
+                break;
+            case R.id.txt_green:
+                txt_color = Color.GREEN;
+                select_content.setTextColor(txt_color);
+                break;
+            case R.id.txt_blue:
+                txt_color = Color.BLUE;
+                select_content.setTextColor(txt_color);
+                break;
+            case R.id.txt_yellow:
+                txt_color = Color.YELLOW;
+                select_content.setTextColor(txt_color);
+                break;
+            //设置字体的大小
+            case R.id.font_15:
+                txt_font = 15;
+                select_content.setTextSize(txt_font);
+                break;
+            case R.id.font_25:
+                txt_font = 25;
+                select_content.setTextSize(txt_font);
+                break;
+            case R.id.font_35:
+                txt_font = 35;
+                select_content.setTextSize(txt_font);
+                break;
+        }
+        return true;
+    }
+    
     public String getTime() {
         //时间格式若是设置为HH:mm:ss  则无法播放时视频
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH-mm-ss");

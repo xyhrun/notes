@@ -2,9 +2,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.xyh.notes.MainActivity">
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+
+    <item android:title="字体颜色">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/txt_red"
+                    android:title="红色" />
+
+                <item android:id="@+id/txt_green"
+                    android:title="绿色" />
+
+                <item android:id="@+id/txt_blue"
+                    android:title="蓝色" />
+
+                <item android:id="@+id/txt_yellow"
+                    android:title="黄色" />
+            </group>
+        </menu>
+    </item>
+
+    <item android:title="字体大小">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item android:id="@+id/font_15"
+                    android:title="15"/>
+
+                <item android:id="@+id/font_25"
+                    android:title="25"/>
+
+                <item android:id="@+id/font_35"
+                    android:title="35"/>
+            </group>
+        </menu>
+    </item>
 </menu>
