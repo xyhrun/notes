@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,7 @@ public class MyBaseAdapter extends BaseAdapter {
         viewHolder.text.setText(text);
         viewHolder.time.setText(time);
         viewHolder.photo_img.setImageBitmap(getImageThumbnail(uri,200, 200));
-//        viewHolder.video_img.setImageBitmap(getVideoThumbnail(videoUri, 200, 200, MediaStore.Images.Thumbnails.MICRO_KIND));
+        viewHolder.video_img.setImageBitmap(getVideoThumbnail(videoUri, 200, 200, MediaStore.Images.Thumbnails.MICRO_KIND));
         return convertView;
     }
 

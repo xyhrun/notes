@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.VideoView;
 
 import java.io.File;
@@ -27,17 +28,21 @@ import java.util.Date;
 public class EditContent extends Activity implements View.OnClickListener {
     private NotesDB notesDB;
     private SQLiteDatabase daWriter;
-    private File mFile, vFile;
+    private File mFile = null;
+    private File vFile = null;
     private static final String TAG = "EditContent";
+//    设置一个标记用于判断编辑的是文字/图片/视频
     private int type;
     private ImageView editPhoto_img, editVideo_img;
     private VideoView videoView;
     private Button save_btn, cancle_btn;
     private EditText edit_et;
+    private MediaController mController;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_view);
+        mController = new MediaController(this);
         editPhoto_img = (ImageView) findViewById(R.id.edit_img_id);
         videoView = (VideoView) findViewById(R.id.edit_video_id);
         save_btn = (Button) findViewById(R.id.edit_save_id);
@@ -84,9 +89,16 @@ public class EditContent extends Activity implements View.OnClickListener {
         }
 
         if (requestCode == 2) {
-            videoView.setVideoURI(Uri.parse(vFile.toString()));
-            Log.d(TAG, "*-----onActivityResult: vFile = "+ vFile.toString());
-            videoView.start();
+            //第一种方式,录制视频后视频界面是黑屏的,点击有声音,可控制进度.推荐这种
+            videoView.setVideoPath(vFile.toString());
+            videoView.setMediaController(mController);
+            mController.setMediaPlayer(videoView);
+            videoView.requestFocus();
+            //第二种方式,录制视频后直接播放视频,播放无声音,无控制进度
+//            videoView.setVideoURI(Uri.parse(vFile.toString()));
+//            Log.d(TAG, "*-----onActivityResult: vFile = "+ vFile.toString());
+//            videoView.start();
+
         }
     }
 
@@ -109,7 +121,8 @@ public class EditContent extends Activity implements View.OnClickListener {
     }
 
     public String getTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:ss");
+        //时间格式若是设置为HH:mm:ss  则无法播放时视频
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH-mm-ss");
         Date date = new Date();
         String mTime = sdf.format(date);
         return mTime;

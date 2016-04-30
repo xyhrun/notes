@@ -22,6 +22,7 @@ public class NotesDB extends SQLiteOpenHelper {
     }
 
     @Override
+    //创建notes2表
     public void onCreate(SQLiteDatabase db) {
         String create_table = "create table notes2 ("
                              +" _id integer primary key autoincrement,"

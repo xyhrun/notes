@@ -95,14 +95,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         Intent intent = new Intent(MainActivity.this, EditContent.class);
         switch (v.getId()) {
+            //添加文字笔记
             case R.id.text_id:
                 intent.putExtra(TYPE, 0);
                 startActivity(intent);
                 break;
+            //添加图片笔记
             case R.id.img_id:
                 intent.putExtra(TYPE, 1);
                 startActivity(intent);
                 break;
+            //添加视频笔记
             case R.id.video_id:
                 intent.putExtra(TYPE, 2);
                 startActivity(intent);
