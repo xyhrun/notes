@@ -1,6 +1,9 @@
 package com.xyh.notes;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,10 +11,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 import android.widget.VideoView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Created by 向阳湖 on 2016/4/29.
@@ -22,7 +30,8 @@ public class SelectActivity extends Activity {
     private ImageView select_img;
     private VideoView select_videoView;
     private TextView select_content, select_time;
-    private Button selectDel, selectReturn;
+    private Button selectDel, selectSave;
+    private ToggleButton selectUpdate;
     private static final String TAG = "SelectActivity";
     private String imgPath, videoPath, content, time;
     private int id;
@@ -32,6 +41,7 @@ public class SelectActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_layout);
         initView();
+        select_content.setEnabled(false);
         notesDB = new NotesDB(this);
         mController = new MediaController(this);
         dbWriter = notesDB.getWritableDatabase();
@@ -66,17 +76,54 @@ public class SelectActivity extends Activity {
         selectDel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dbWriter.delete(NotesDB.TABLE_NAME, NotesDB.ID + "=" + id, null);
-                finish();
+                AlertDialog.Builder builder = new AlertDialog.Builder(SelectActivity.this);
+                builder.setIcon(R.mipmap.warning).setTitle("删除后不可恢复,你确定?")
+                        .setCancelable(false).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dbWriter.delete(NotesDB.TABLE_NAME, NotesDB.ID + "=" + id, null);
+                        finish();
+                    }
+                }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+//                        finish();
+                    }
+                }).show();
             }
         });
 
-        selectReturn.setOnClickListener(new View.OnClickListener() {
+        selectUpdate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    select_content.setEnabled(true);
+                } else {
+                    select_content.setEnabled(false);
+                }
+            }
+        });
+
+        selectSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String time = getTime();
+                String content = select_content.getText().toString();
+                ContentValues values = new ContentValues();
+                values.put(NotesDB.CONTENT, content);
+                values.put(NotesDB.TIME, time);
+                dbWriter.update(NotesDB.TABLE_NAME, values, NotesDB.ID + "=" + id, null);
                 finish();
             }
         });
+    }
+
+    public String getTime() {
+        //时间格式若是设置为HH:mm:ss  则无法播放时视频
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy年MM月dd日 HH-mm-ss");
+        Date date = new Date();
+        String mTime = sdf.format(date);
+        return mTime;
     }
 
     private void initView() {
@@ -85,6 +132,7 @@ public class SelectActivity extends Activity {
         select_content = (TextView) findViewById(R.id.select_et_id);
         select_time = (TextView) findViewById(R.id.select_time_id);
         selectDel = (Button) findViewById(R.id.select_delete_id);
-        selectReturn = (Button) findViewById(R.id.select_return_id);
+        selectSave = (Button) findViewById(R.id.select_save_id);
+        selectUpdate = (ToggleButton) findViewById(R.id.select_update_id);
     }
 }
