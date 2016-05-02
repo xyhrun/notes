@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,11 +15,11 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    private Button text_btn, img_btn, video_btn;
+import java.lang.reflect.Method;
+
+public class MainActivity extends AppCompatActivity{
     private NotesDB notesDB;
     private SQLiteDatabase dbReader;
     private MyBaseAdapter myBaseAdapter;
@@ -40,9 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        text_btn.setOnClickListener(this);
-        img_btn.setOnClickListener(this);
-        video_btn.setOnClickListener(this);
         notesDB = new NotesDB(this);
         dbReader = notesDB.getReadableDatabase();
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,9 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initView() {
-        text_btn = (Button) findViewById(R.id.text_id);
-        img_btn = (Button) findViewById(R.id.img_id);
-        video_btn = (Button) findViewById(R.id.video_id);
         mListView = (ListView) findViewById(R.id.listview_id);
         mTollbar = (Toolbar) findViewById(R.id.toolbar);
     }
@@ -141,37 +136,75 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        //设置菜单显示图标失败
+//        setIconEnable(menu,true);
+//        MenuItem item1 = menu.add(0, 1, 0, "文本");
+//        item1.setIcon(R.mipmap.text);
+//
+//        MenuItem item2 = menu.add(0, 1, 0, "图片");
+//        item2.setIcon(R.mipmap.carema1);
+//
+//        MenuItem item3 = menu.add(0, 1, 0,"视频");
+//        item3.setIcon(R.mipmap.video);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onClick(View v) {
         Intent intent = new Intent(MainActivity.this, EditContent.class);
-        switch (v.getId()) {
-            //添加文字笔记
-            case R.id.text_id:
+        //设置跳转指定网页
+        Intent intent1 = new Intent();
+        intent1.setAction("android.intent.action.VIEW");
+        Uri uri = Uri.parse("https://www.zhihu.com/people/cloud-10");
+        intent1.setData(uri);
+        switch (item.getItemId()) {
+            //添加文本
+            case R.id.add_txt:
                 intent.putExtra(TYPE, 0);
                 startActivity(intent);
                 break;
             //添加图片笔记
-            case R.id.img_id:
+            case R.id.add_carema:
                 intent.putExtra(TYPE, 1);
                 startActivity(intent);
                 break;
             //添加视频笔记
-            case R.id.video_id:
+            case R.id.add_video:
                 intent.putExtra(TYPE, 2);
                 startActivity(intent);
                 break;
+            case R.id.about_me:
+                startActivity(intent1);
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    //利用反射机制设置菜单弹出图标,但是无效
+    private void setIconEnable(Menu menu, boolean enable)
+    {
+        try
+        {
+            Class<?> clazz = Class.forName("com.android.internal.view.menu.MenuBuilder");
+            Method m = clazz.getDeclaredMethod("setOptionalIconsVisible", boolean.class);
+            m.setAccessible(true);
+
+            //MenuBuilder实现Menu接口，创建菜单时，传进来的menu其实就是MenuBuilder对象(java的多态特征)
+            m.invoke(menu, enable);
+
+        } catch (Exception e)
+        {
+            e.printStackTrace();
         }
     }
 }
+

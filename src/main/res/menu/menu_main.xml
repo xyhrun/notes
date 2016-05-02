@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.xyh.notes.MainActivity">
 
-    <item android:title="字体颜色">
+    <item android:title="字体颜色"
+        android:icon="@mipmap/color">
         <menu>
             <group android:checkableBehavior="single">
                 <item android:id="@+id/txt_red"
@@ -21,7 +22,8 @@
         </menu>
     </item>
 
-    <item android:title="字体大小">
+    <item android:title="字体大小"
+        android:icon="@mipmap/text_size">
         <menu>
             <group android:checkableBehavior="single">
                 <item android:id="@+id/font_15"

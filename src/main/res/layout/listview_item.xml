@@ -13,18 +13,22 @@
             android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:layout_marginLeft="10dp"
         android:orientation="vertical"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
-        android:layout_height="60dp">
+        android:layout_weight="1"
+        android:layout_height="80dp">
 
         <TextView android:id="@+id/list_text_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="17sp"
             android:singleLine="true"
             android:ellipsize="end" />
 
         <TextView android:id="@+id/list_time_id"
+            android:gravity="center_horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
